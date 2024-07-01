@@ -1,6 +1,10 @@
 from collections import UserDict
 
 
+class PhoneTooShortError(Exception):
+    pass
+
+
 class Field:
     def __init__(self, value):
         self.value = value
@@ -23,6 +27,15 @@ class Record:
         self.name = Name(name)
         self.phones = []
 
+    def get_phone(func):
+        def inner(self, phone):
+            if len(phone) < 10:
+                raise PhoneTooShortError("Phone number is too short")
+            return func(self, phone)
+
+        return inner
+
+    @get_phone
     def add_phone(self, phone_number):
         self.phones.append(Phone(phone_number))
 
@@ -64,8 +77,11 @@ book = AddressBook()
 
 # Створення запису для John
 john_record = Record("John")
-john_record.add_phone("1234567890")
-john_record.add_phone("5555555555")
+try:
+    john_record.add_phone("1234567890")
+    john_record.add_phone("555555555")
+except PhoneTooShortError as e:
+    print(e)
 
 # Додавання запису John до адресної книги
 book.add_record(john_record)
