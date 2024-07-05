@@ -54,10 +54,14 @@ class Record:
     def remove_phone(self, phone_number):
         self.phones = [phone for phone in self.phones if phone_number != phone.value]
 
-    def edit_phone(self, phone_number, new_phone_number):
-        for phone in self.phones:
-            if phone.value == phone_number:
-                phone.value = new_phone_number
+    def edit_phone(self, old_phone, new_phone_number):
+        if not re.findall("\D", old_phone):
+            for phone in self.phones:
+                if phone.value == old_phone:
+                    phone.value = new_phone_number
+            print("The phone is not in your contacts")
+        else:
+            print("Need enter a phone number")
             
     def find_phone(self, phone):
         for item in self.phones:
@@ -111,7 +115,7 @@ john.edit_phone("1234567890", "1112223333")
 print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
 
 # Пошук конкретного телефону у записі John
-found_phone = john.find_phone("1212223333")
+found_phone = john.find_phone("1112223333")
 print(f"{john.name}: {found_phone}")  # Виведення: John: 5555555555
 
 # Видалення запису Jane
