@@ -2,20 +2,20 @@ from collections import UserDict
 import re
 
 
-class PhoneTooShortError(Exception):
+class LengthPhoneNumberError(Exception):
     pass
 
 
-class NotNumber(Exception):
+class NotNumberError(Exception):
     pass
 
 
 def get_phone(func):
     def inner(self, phone):
-        if len(phone) < 10:
-            raise PhoneTooShortError("Phone number is too short")
+        if len(phone) != 10:
+            raise LengthPhoneNumberError("Іncorrectly entered phone number")
         elif re.findall("\D", phone):
-            raise NotNumber("Need enter a phone number")
+            raise NotNumberError("Need enter a phone number")
 
         return func(self, phone)
 
@@ -54,14 +54,17 @@ class Record:
     def remove_phone(self, phone_number):
         self.phones = [phone for phone in self.phones if phone_number != phone.value]
 
+    def check_phone_is_found(self, number):
+        for phone in self.phones:
+            if phone.value == number:
+                return self.phones.index(phone)
+        raise ValueError
+
     def edit_phone(self, old_phone, new_phone_number):
-        if not re.findall("\D", old_phone):
-            for phone in self.phones:
-                if phone.value == old_phone:
-                    phone.value = new_phone_number
-            print("The phone is not in your contacts")
-        else:
-            print("Need enter a phone number")
+        try:
+            self.phones[self.check_phone_is_found(old_phone)] = Phone(new_phone_number)
+        except NotNumberError or LengthPhoneNumberError as e:
+            print(e)
             
     def find_phone(self, phone):
         for item in self.phones:
@@ -110,7 +113,7 @@ print(book)
 
 # Знаходження та редагування телефону для John
 john = book.find("John")
-john.edit_phone("1234567890", "1112223333")
+john.edit_phone("1244567890", "1112223333")
 
 print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
 
