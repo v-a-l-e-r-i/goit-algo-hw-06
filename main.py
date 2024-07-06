@@ -58,7 +58,7 @@ class Record:
         for phone in self.phones:
             if phone.value == number:
                 return self.phones.index(phone)
-        raise ValueError
+        raise ValueError("Not found phone number")
 
     def edit_phone(self, old_phone, new_phone_number):
         try:
