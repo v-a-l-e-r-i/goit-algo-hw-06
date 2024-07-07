@@ -12,9 +12,10 @@ class NotNumberError(Exception):
 
 def get_phone(func):
     def inner(self, phone):
+        patter = r"\D"
         if len(phone) != 10:
             raise LengthPhoneNumberError("Іncorrectly entered phone number")
-        elif re.findall("\D", phone):
+        if re.findall(patter, phone):
             raise NotNumberError("Need enter a phone number")
 
         return func(self, phone)
@@ -46,10 +47,7 @@ class Record:
         self.phones = []
 
     def add_phone(self, phone_number):
-        try:
-            self.phones.append(Phone(phone_number))
-        except Exception as e:
-            print(e)
+        self.phones.append(Phone(phone_number))
 
     def remove_phone(self, phone_number):
         self.phones = [phone for phone in self.phones if phone_number != phone.value]
@@ -61,11 +59,8 @@ class Record:
         raise ValueError("Not found phone number")
 
     def edit_phone(self, old_phone, new_phone_number):
-        try:
-            self.phones[self.check_phone_is_found(old_phone)] = Phone(new_phone_number)
-        except NotNumberError or LengthPhoneNumberError as e:
-            print(e)
-            
+        self.phones[self.check_phone_is_found(old_phone)] = Phone(new_phone_number)
+
     def find_phone(self, phone):
         for item in self.phones:
             if item.value == phone:
@@ -113,7 +108,7 @@ print(book)
 
 # Знаходження та редагування телефону для John
 john = book.find("John")
-john.edit_phone("1244567890", "1112223333")
+john.edit_phone("1234567890", "111222a333")
 
 print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
 
